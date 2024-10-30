@@ -54,19 +54,19 @@
               </Card>
             </div>
             <div>
-              <div class="pl-14">
+              <div class="pl-14 pb-14">
                 <Card class="w-8/12 h-6/6 text-center bg-[#a38967]" style="cursor: pointer;" @click="teste">
                   <div class="pl-4 pr-4">
-                    <div class="font-PlayfairDisplay mt-4">
+                    <div class="font-PlayfairDisplay m-4">
                       LISTA DE PRESENTE
-                    </div>
-                    <Separator class="mb-4 bg-[#856741]"/>
-                    <div class="pb-4">
-                      asdasd
                     </div>
                   </div>
                 </Card>
               </div>
+              <Foto :photos="['/1.jpg', '/2.jpg']"/>
+              <Foto class="pl-14" :photos="['/3.jpg']"/>
+              <Foto :photos="['4.jpg', '5.jpg']"/>
+              <Foto class="pl-10" :photos="['6.jpg']"/>
             </div>
           </div>
         </CardHeader>
@@ -87,6 +87,7 @@ import { ref } from 'vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import Caderno from '@/components/Caderno.vue'
+import Foto from '@/components/Foto.vue'
 
 const mensagemCasal = ref('')
 
