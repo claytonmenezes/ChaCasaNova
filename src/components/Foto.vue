@@ -1,5 +1,5 @@
 <template>
-    <div class="grid grid-cols-6">
+    <div class="grid grid-cols-6 sepia">
       <div v-for="(photo, index) in photos" :key="index" class="photo col-span-3" :style="getRandomStyles()" >
         <img :src="photo" alt="Foto" class="photo-image">
       </div>
@@ -17,10 +17,9 @@
     },
     methods: {
       getRandomStyles() {
-        // Gera uma rotação e posição aleatórias para cada foto
-        const rotation = Math.floor(Math.random() * 20 - 10); // Ângulo entre -10 e 10 graus
-        const top = Math.floor(Math.random() * 30); // Espaçamento aleatório do topo
-        const left = Math.floor(Math.random() * 30); // Espaçamento aleatório da esquerda
+        const rotation = Math.floor(Math.random() * 20 - 10)
+        const top = Math.floor(Math.random() * 30)
+        const left = Math.floor(Math.random() * 30)
         return {
           transform: `rotate(${rotation}deg)`,
           top: `${top}px`,
@@ -33,8 +32,6 @@
   
   <style scoped>  
   .photo {
-    width: 150px;
-    height: 150px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     overflow: hidden;
