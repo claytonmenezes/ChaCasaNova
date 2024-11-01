@@ -2,36 +2,29 @@
   <div>
     <div v-if="!ehCelular" class="bg-[#a38967] h-screen">
       <div class="grid grid-cols-12">
-        <div class="col-span-3 grid justify-center items-center">
-          <div class="col-span-12">
-            <img src="/pote.png" alt="Pote" class="rotate-12">
-          </div>
-          <div class="col-span-12 flex">
-            <img src="/colher de pau.png" alt="Pote" class="w-6/12">
-            <img src="/colher ovo.png" alt="Pote" class="w-6/12">
-          </div>
+        <div class="col-span-3">
+          <img src="/juntas.png" alt="Pote" style="object-fit: cover" class="h-screen">
         </div>
-        <div class="col-span-6 col-span-12">
-          <Card class="h-[calc(100vh-2rem)] bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] my-4">
+        <div class="col-span-6">
+          <Card class="h-screen bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)]">
             <CardHeader>
-              <div class="grid grid-cols-3">
-                <div>
+              <div class="grid grid-cols-12">
+                <div class="col-span-4">
                   <div class="grid grid-cols-2">
-                    <img src="/folha.png" alt="Pote" class="rotate-12">
-                    <img src="/pote.png" alt="Pote" class="rotate-12">
-                    <img src="/pote.png" alt="Pote" class="rotate-12">
-                    <img src="/pote.png" alt="Pote" class="rotate-12">
+                    <div class="pt-10 2xl:pt-0">
+                      <img src="/colher de pau 2.png" alt="Pote" class="rotate-45 w-14 ml-8">
+                      <img src="/prato.png" alt="Pote" class="rotate-12 w-32 ">
+                    </div>
+                    <div class="pt-10 2xl:pt-0">
+                      <img src="/bule 2.png" alt="Pote" class="rotate-12 lg:pr-6">
+                      <img src="/xicara.png" alt="Pote" class="rotate-12">
+                    </div>
                   </div>
-                  <div class="justify-center">
-                    <img src="/pote.png" alt="Pote" class="rotate-12">
-                  </div>
-                  <div class="grid grid-cols-4">
-                    <img src="/suculenta.png" alt="Folha">
-                    <img src="/colher de pau.png" alt="Pote" class="rotate-180">
-                    <img src="/colher ovo.png" alt="ColherOvo">
+                  <div class="justify-center pt-10 2xl:pt-0">
+                    <img src="/taboaCarne.png" alt="Pote" class="rotate-12">
                   </div>
                 </div>
-                <div>
+                <div class="col-span-4">
                   <CardTitle class="text-5xl text-nowrap text-center font-PlayfairDisplay flex justify-center items-center">
                     <img src="/buque.png" alt="Folha" class="w-14">
                     CHÁ DE
@@ -44,7 +37,7 @@
                     <Separator class="my-4 bg-[#856741] w-6/12"/>
                   </div>
                   <CardTitle class="text-3xl text-center font-PlayfairDisplay text-nowrap pb-4">IOHANNA & BRUNO</CardTitle>
-                  <Card class="bg-[#e4d8c3]">
+                  <Card class="bg-[#e4d8c3] w-64 2xl:w-full">
                     <CardHeader>
                       <CardTitle>
                         Deixe uma mensagem para o casal
@@ -55,30 +48,29 @@
                     </CardContent>
                   </Card>
                 </div>
-                <div>
-                  <div class="pl-14 pb-14">
+                <div class="col-span-4">
+                  <div class="pl-14 pb-28 2xl:pb-10">
                     <Card class="w-8/12 h-6/6 text-center bg-[#cfb899]" style="cursor: pointer;" @click="teste">
-                      <div class="pl-4 pr-4">
+                      <div class="">
                         <div class="font-PlayfairDisplay m-4">
                           LISTA DE PRESENTE
                         </div>
                       </div>
                     </Card>
                   </div>
-                  <Foto :photos="['1.jpg', '2.jpg']"/>
-                  <Foto class="pl-14" :photos="['3.jpg', '6.jpg']"/>
-                  <Foto :photos="['4.jpg', '5.jpg']"/>
+                  <Foto class="pl-10 2xl:pl-0 pb-6 2xl:pb-0" :photos="['1.jpg', '2.jpg']"/>
+                  <Foto class="pl-14 pb-6 2xl:pb-0" :photos="['3.jpg', '6.jpg']"/>
+                  <Foto class="pl-10 2xl:pl-0" :photos="['4.jpg', '5.jpg']"/>
                 </div>
               </div>
             </CardHeader>
+            <CardContent class="text-center">
+              asdasdasdasdasdasd
+            </CardContent>
           </Card>
         </div>
-        <div class="col-span-3 grid grid-cols-2 items-center">
-          <div class="col-span-2 grid place-items-center">
-            <img src="/folha.png" alt="Pote" class="rotate-45 w-[calc(100%-10rem)]">
-          </div>
-          <img src="/suculenta.png" alt="Pote" class="rotate-12 col-span-1 w-[calc(100%-1rem)]">
-          <img src="/pote.png" alt="Pote" class="rotate-12 col-span-1 w-[calc(100%-2rem)]">
+        <div class="col-span-3">
+          <img src="/juntas.png" alt="Pote" style="object-fit: cover" class="h-screen">
         </div>
       </div>
     </div>
