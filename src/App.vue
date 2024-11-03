@@ -1,5 +1,5 @@
 <template>
-  <div :class="screenWidth >= 400 ? 'flex justify-center items-center bg-[#a38967] h-screen' : 'bg-[#a38967] h-screen'" style="background-image: url('/juntas.png')">
+  <div :class="screenWidth >= 400 ? screenWidth === 1366 || screenWidth === 1360 ? 'flex justify-center items-center bg-[#a38967]' : 'flex justify-center items-center bg-[#a38967] h-screen' : 'bg-[#a38967] h-screen'" style="background-image: url('/juntas.png')">
     <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] xl:w-[50%]">
       <CardHeader>
         <div class="grid grid-cols-12">
@@ -50,10 +50,15 @@
           </div>
         </div>
       </CardHeader>
+      <div class="flex justify-center">
+        <Separator class="my-4 bg-[#856741] w-4/12"/>
+        🥄
+        <Separator class="my-4 bg-[#856741] w-4/12"/>
+      </div>
       <CardContent class="text-center font-PlayfairDisplay text-3xl">
         Rua Elias Antonio Zogbi, 150 - Santo Amaro - São Paulo - SP
         <br>
-        Salão de Festa
+        Salão de Festa - a partir das 14h
       </CardContent>
     </Card>
   </div>
@@ -67,6 +72,7 @@
             🥄
             <Separator class="my-4 bg-[#856741] w-6/12"/>
           </div>
+          Selecione um ou mais presente(s)
         </DialogDescription>
       </DialogHeader>
       <ScrollArea>
@@ -74,23 +80,28 @@
           <Card v-for="(grupo, index) in lista" :key="index" class="col-span-12 md:col-span-4">
             <CardContent>
               <h2 class="text-lg font-semibold text-center border-b border-gray-300 pb-2">{{ grupo.nome }}</h2> 
-              <div v-for="(presente, indexPresente) in grupo.presentes" :key="indexPresente">
+              <div v-for="(presente, indexPresente) in grupo.presentes" :key="indexPresente" style="cursor: pointer;">
                 <span class="mr-2">•</span>
-                <span>{{ presente.nome }}</span>
+                <span class="text-sm">{{ presente.nome }}</span>
               </div>
             </CardContent>
           </Card>
         </div>
       </ScrollArea>
+      <DialogFooter>
+        <div class="flex justify-center">
+          <Button @click="dialogListaPresente = false">Ok</Button>
+        </div>
+      </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
