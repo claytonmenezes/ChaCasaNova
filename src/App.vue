@@ -1,9 +1,9 @@
 <template>
-  <div class="flex justify-center items-center bg-[#a38967] h-screen" style="background-image: url('/juntas.png')">
-    <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] sm:w-[50%]">
+  <div class="lg:flex lg:justify-center lg:items-center bg-[#a38967] h-screen" style="background-image: url('/juntas.png')">
+    <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] xl:w-[50%]">
       <CardHeader>
         <div class="grid grid-cols-12">
-          <div class="col-span-3 grid grid-cols-2 content-center sm:content-none">
+          <div class="hidden 2xl:col-span-3 xl:col-span-2 xl:grid 2xl:grid-cols-2 xl:grid-cols-1 content-center sm:content-none">
             <img src="/colher ovo.png" alt="Pote" class="rotate-45">
             <img src="/colher de pau.png" alt="Pote" class="rotate-45">
             <img src="/pote.png" alt="Pote" class="rotate-45">
@@ -12,7 +12,7 @@
             <img src="/xicara.png" alt="Pote" class="rotate-12">
             <img src="/taboaCarne.png" alt="Pote" class="rotate-12 col-span-2">
           </div>
-          <div class="col-span-6">
+          <div class="2xl:col-span-6 xl:col-span-8 col-span-12">
             <CardTitle class="text-5xl text-nowrap text-center font-PlayfairDisplay flex justify-center items-center">
               <img src="/buque.png" alt="Folha" class="w-14">
               CHÁ DE
@@ -41,12 +41,12 @@
               </div>
             </Card>
           </div>
-          <div class="col-span-3 content-center sm:content-none">
-            <Foto :photos="['1.jpg', '2.jpg']"/>
-            <Foto :photos="['3.jpg', '6.jpg']"/>
-            <Foto :photos="['4.jpg', '5.jpg']"/>
-            <Foto :photos="['7.jpg', '8.jpg']"/>
-            <Foto :photos="['9.jpg', '10.jpg']"/>
+          <div class="hidden xl:grid 2xl:col-span-3 xl:col-span-2 content-center sm:content-none">
+            <Foto class="xl:pb-4 xl:h-32" :photos="['1.jpg', '2.jpg']"/>
+            <Foto class="xl:pb-4 xl:h-32" :photos="['3.jpg', '6.jpg']"/>
+            <Foto class="xl:pb-4 xl:h-32" :photos="['4.jpg', '5.jpg']"/>
+            <Foto class="xl:pb-4 xl:h-32" :photos="['7.jpg', '8.jpg']"/>
+            <Foto class="xl:pb-4 xl:h-32" :photos="['9.jpg', '10.jpg']"/>
           </div>
         </div>
       </CardHeader>
