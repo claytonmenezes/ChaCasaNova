@@ -32,12 +32,21 @@
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Input placeholder="Seu nome" v-model="nomePessoa" class="bg-white"/>
-                <Caderno class="h-64" v-model="mensagemCasal"/>
+                <Input placeholder="Seu nome" v-model="convidado.nome" class="bg-white"/>
+                <Caderno class="h-64" v-model="convidado.mensagem"/>
               </CardContent>
+              <Label>Estará presente no dia?</Label>
+              <RadioGroup v-model="convidado.presente" orientation="horizontal">
+                <div class="flex justify-center items-center space-x-2 pb-4">
+                  <RadioGroupItem :value="true" />
+                  <Label for="r1">Sim</Label>
+                  <RadioGroupItem :value="false" />
+                  <Label for="r2">Não</Label>
+                </div>
+              </RadioGroup>
               <div class="flex justify-center gap-4 mb-6">
                 <Button @click="abrirListaPresente">Lista de Presente</Button>
-                <Button>Enviar</Button>
+                <Button @click="enviar">Enviar</Button>
               </div>
             </Card>
           </div>
@@ -72,25 +81,41 @@
             🥄
             <Separator class="my-4 bg-[#856741] w-6/12"/>
           </div>
-          Selecione um ou mais presente(s)
+          <div class="flex justify-center">
+            Selecione um ou mais presente(s)
+          </div>
         </DialogDescription>
       </DialogHeader>
       <ScrollArea>
         <div class="grid grid-cols-12 gap-4">
           <Card v-for="(grupo, index) in lista" :key="index" class="col-span-12 md:col-span-4">
             <CardContent>
-              <h2 class="text-lg font-semibold text-center border-b border-gray-300 pb-2">{{ grupo.nome }}</h2> 
-              <div v-for="(presente, indexPresente) in grupo.presentes" :key="indexPresente" style="cursor: pointer;">
-                <span class="mr-2">•</span>
-                <span class="text-sm">{{ presente.nome }}</span>
+              <h2 class="text-lg font-semibold text-center pb-2">{{ grupo.nome }}</h2> 
+              <div v-for="(presente, indexPresente) in grupo.presentes" :key="indexPresente" class="flex items-center gap-2 pb-2">
+                <Checkbox :id="`presente${indexPresente}`" v-model:checked="presente.selecionado" :disabled="presente.disabled" @update:checked="aoSelecionarPresente(presente.id)"/>
+                <div :for="`presente${indexPresente}`" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{{ presente.nome }} </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </ScrollArea>
-      <DialogFooter>
-        <Button @click="dialogListaPresente = false">Ok</Button>
-      </DialogFooter>
+      <div class="flex justify-center">
+        <Button @click="dialogListaPresente = false" class="w-2/6">Ok</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+  <Dialog v-model:open="alerta">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Alerta!</DialogTitle>
+      </DialogHeader>
+      <DialogDescription>
+        Esta pessoa já foi cadastrada. Deseja editar as informações deste cadastro?
+      </DialogDescription>
+      <div class="flex justify-center gap-4">
+        <Button @click="alerta = false" class="w-2/6 bg-red-300">Não</Button>
+        <Button @click="editarConvidado" class="w-2/6 bg-green-300">Sim</Button>
+      </div>
     </DialogContent>
   </Dialog>
 </template>
@@ -99,57 +124,120 @@
 import { ref, onMounted } from 'vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import Caderno from '@/components/Caderno.vue'
 import Foto from '@/components/Foto.vue'
 import { createClient } from '@supabase/supabase-js'
 
-
 const lista = ref([])
-const nomePessoa = ref('')
 const dialogListaPresente = ref(false)
 const screenWidth = ref(window.innerWidth)
 const screenHeight = ref(window.innerHeight)
-const cardPrincipal = ref(null)
-const isMobile = ref(false)
+const alerta = ref(false)
+const ehEditar = ref(false)
+const convidado = ref({
+  nome: '',
+  mensagem: '',
+  presente: true,
+  presentes: []
+})
 
-const mensagemCasal = ref('')
-
+const aoSelecionarPresente = (presenteId) => {
+  const index = convidado.value.presentes.findIndex(p => p === presenteId)
+  if (index === -1) {
+    convidado.value.presentes.push(presenteId)
+  } else {
+    convidado.value.presentes.splice(index, 1)
+  }
+}
 const abrirListaPresente = () => {
   dialogListaPresente.value = true
-}
-const checkDevice = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera
-  isMobile.value = /android|iphone|ipad|ipod|opera mini|iemobile|wpdesktop/i.test(userAgent.toLowerCase())
 }
 const supabase = createClient('https://acfrcmkzzabbqtwchiow.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZnJjbWt6emFiYnF0d2NoaW93Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDQ3NzE3OCwiZXhwIjoyMDQ2MDUzMTc4fQ.ZoWVFkjTxFJL5ox3Zb-R4hgk7t6ia9T639aJEFZF4js')
 
 const agruparPorGrupo = (presentes) => {
   return presentes.reduce((acc, presente) => {
-    const { grupo, nome, qtde } = presente
-
-    // Se o grupo ainda não existe no acumulador, cria um novo
+    const {id, grupo, nome, qtde } = presente
     if (!acc[grupo]) {
       acc[grupo] = { nome: grupo, presentes: [] }
     }
-
-    // Adiciona o nome do item ao array de itens do grupo
-    acc[grupo].presentes.push({nome, qtde})
-
+    acc[grupo].presentes.push({id, nome, qtde: ref(qtde), selecionado: ref(qtde === 0), disabled: ref(qtde === 0)})
     return acc
   }, {})
 }
-
+const enviar = async () => {
+  let convidadoInterno
+  if (ehEditar.value) {
+    const { data, error } = await supabase.from('convidado').update({ mensagem: convidado.value.mensagem, presente: convidado.value.presente }).eq('nome', convidado.value.nome).select()
+    await supabase.from('convidadoPresente').delete().eq('convidadoId', data[0].id)
+    convidadoInterno = data[0]
+  } else {
+    const { data, error } = await supabase.from('convidado').insert([{ nome: convidado.value.nome, mensagem: convidado.value.mensagem, presente: convidado.value.presente }]).select()
+    if (error && error.code === '23505' ) {
+      alerta.value = true
+      return
+    }
+    convidadoInterno = data[0]
+  }
+  await supabase.from('convidadoPresente').insert(convidado.value.presentes.map(p => ({convidadoId: convidadoInterno.id, presenteId: p})))
+  await desabilitaPresente()
+}
+const desabilitaPresente = async () => {
+  const { data: convidadosPresentes } = await supabase.from('convidadoPresente').select("*")
+  for (const convidadoPresente of convidadosPresentes) {
+    for (const key in lista.value) {
+      const presentes = lista.value[key].presentes
+      const presentesConvidado = presentes.filter(p => p.id === convidadoPresente.presenteId)
+      for (const presente of presentesConvidado) {
+        presente.qtde -= 1
+        if (ehEditar && convidado.value.presentes.some(p => p === presente.id)) {
+          presente.selecionado = true
+          presente.disabled = false
+        } else if (presente.qtde <= 0) {
+          presente.selecionado = true
+          presente.disabled = true
+        }
+      }
+    }
+  }
+}
+const editarConvidado = async () => {
+  ehEditar.value = true
+  const { data: convidadoData } = await supabase.from('convidado').select("*").eq('nome', convidado.value.nome)
+  const convidadoInterno = convidadoData[0]
+  const { data: convidadoPresenteData } = await supabase.from('convidadoPresente').select("*").eq('convidadoId', convidadoInterno.id)
+  const presentes = convidadoPresenteData.map(cp => (cp.presenteId))
+  convidado.value = {
+    nome: convidadoInterno.nome,
+    mensagem: convidadoInterno.mensagem,
+    presente: convidadoInterno.presente,
+    presentes
+  }
+  for (const item in lista.value) {
+    for (const item2 of lista.value[item].presentes) {
+      const index = presentes.findIndex(p => p === item2.id)
+      if (index >= 0) {
+        item2.selecionado = true
+      }
+    }
+  }
+  await desabilitaPresente()
+  dialogListaPresente.value = true
+  alerta.value = false
+}
 onMounted(async () => {
   window.addEventListener('resize', () => {
     screenWidth.value = window.innerWidth
     screenHeight.value = window.innerHeight
   })
-  checkDevice()
-  const { data, error } = await supabase.from('presente').select('*')
+  const { data, error } = await supabase.from('presente').select('*').order('nome')
   lista.value = agruparPorGrupo(data)
+  await desabilitaPresente()
 })
 </script>
