@@ -1,25 +1,18 @@
 <template>
-  <div class="grid grid-cols-12 items-center justify-center bg-[#a38967] h-screen" style="background-image: url('/juntas.png')">
-    <div v-if="!ehCelular" class="col-span-3"></div>
-    <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] col-span-6">
+  <div class="flex justify-center items-center bg-[#a38967] h-screen" style="background-image: url('/juntas.png')">
+    <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] sm:w-[50%]">
       <CardHeader>
         <div class="grid grid-cols-12">
-          <div class="col-span-4">
-            <div class="grid grid-cols-2">
-              <div class="pt-10 2xl:pt-0">
-                <img src="/colher de pau 2.png" alt="Pote" class="rotate-45 w-14 ml-8">
-                <img src="/prato.png" alt="Pote" class="rotate-12 w-32 ">
-              </div>
-              <div class="pt-10 2xl:pt-0">
-                <img src="/bule 2.png" alt="Pote" class="rotate-12 lg:pr-6">
-                <img src="/xicara.png" alt="Pote" class="rotate-12">
-              </div>
-            </div>
-            <div class="justify-center pt-10 2xl:pt-0">
-              <img src="/taboaCarne.png" alt="Pote" class="rotate-12">
-            </div>
+          <div class="col-span-3 grid grid-cols-2 content-center sm:content-none">
+            <img src="/colher ovo.png" alt="Pote" class="rotate-45">
+            <img src="/colher de pau.png" alt="Pote" class="rotate-45">
+            <img src="/pote.png" alt="Pote" class="rotate-45">
+            <img src="/prato.png" alt="Pote" class="rotate-12">
+            <img src="/bule 2.png" alt="Pote" class="-rotate-12">
+            <img src="/xicara.png" alt="Pote" class="rotate-12">
+            <img src="/taboaCarne.png" alt="Pote" class="rotate-12 col-span-2">
           </div>
-          <div class="col-span-4">
+          <div class="col-span-6">
             <CardTitle class="text-5xl text-nowrap text-center font-PlayfairDisplay flex justify-center items-center">
               <img src="/buque.png" alt="Folha" class="w-14">
               CHÁ DE
@@ -31,8 +24,8 @@
               🥄
               <Separator class="my-4 bg-[#856741] w-6/12"/>
             </div>
-            <CardTitle class="text-3xl text-center font-PlayfairDisplay text-nowrap pb-4">IOHANNA & BRUNO</CardTitle>
-            <Card class="bg-[#e4d8c3] w-64 2xl:w-full">
+            <CardTitle class="text-3xl text-center font-PlayfairDisplay pb-4">IOHANNA & BRUNO</CardTitle>
+            <Card class="bg-[#e4d8c3] text-center">
               <CardHeader>
                 <CardTitle class="text-center">
                   Deixe uma mensagem para o casal
@@ -42,24 +35,25 @@
                 <Input placeholder="Seu nome" v-model="nomePessoa" class="bg-white"/>
                 <Caderno class="h-64" v-model="mensagemCasal"/>
               </CardContent>
+              <div class="flex justify-center gap-4 mb-6">
+                <Button @click="abrirListaPresente">Lista de Presente</Button>
+                <Button>Enviar</Button>
+              </div>
             </Card>
           </div>
-          <div class="col-span-4">
-            <Card class="ml-14 2xl:ml-0 mb-28 2xl:mb-10 font-PlayfairDisplay bg-[#cfb899]" style="cursor: pointer;" @click="abrirListaPresente">
-              <CardHeader>
-                <CardTitle class="text-center">
-                  LISTA DE PRESENTE
-                </CardTitle>
-              </CardHeader>
-            </Card>
-            <Foto class="pl-10 2xl:pl-0 pb-6 2xl:pb-0" :photos="['1.jpg', '2.jpg']"/>
-            <Foto class="pl-14 pb-6 2xl:pb-0" :photos="['3.jpg', '6.jpg']"/>
-            <Foto class="pl-10 2xl:pl-0" :photos="['4.jpg', '5.jpg']"/>
+          <div class="col-span-3 content-center sm:content-none">
+            <Foto :photos="['1.jpg', '2.jpg']"/>
+            <Foto :photos="['3.jpg', '6.jpg']"/>
+            <Foto :photos="['4.jpg', '5.jpg']"/>
+            <Foto :photos="['7.jpg', '8.jpg']"/>
+            <Foto :photos="['9.jpg', '10.jpg']"/>
           </div>
         </div>
       </CardHeader>
-      <CardContent class="text-center">
-        asdasdasdasdasdasdasdasd
+      <CardContent class="text-center font-PlayfairDisplay text-3xl">
+        Rua Elias Antonio Zogbi, 150 - Santo Amaro - São Paulo - SP
+        <br>
+        Salão de Festa
       </CardContent>
     </Card>
   </div>
@@ -81,7 +75,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -93,12 +87,7 @@ import PresentList from '@/components/PresentList.vue'
 
 const lista = ref([])
 const nomePessoa = ref('')
-const ehCelular = ref(false)
 const dialogListaPresente = ref(false)
-const ehMobile = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera
-  ehCelular.value = /android|iphone|ipad|ipod|opera mini|iemobile|wpdesktop/i.test(userAgent.toLowerCase())
-}
 
 const mensagemCasal = ref('')
 
@@ -124,7 +113,6 @@ const agruparPorGrupo = (presentes) => {
 }
 
 onMounted(async () => {
-  ehMobile()
   const { data, error } = await supabase.from('presente').select('*')
   lista.value = agruparPorGrupo(data)
 })
