@@ -1,5 +1,5 @@
 <template>
-  <div :class="screenWidth >= 400 ? screenWidth === 1366 || screenWidth === 1360 ? 'flex justify-center items-center bg-[#a38967]' : 'flex justify-center items-center bg-[#a38967] h-screen' : 'bg-[#a38967] h-screen'" style="background-image: url('/juntas.png')">
+  <div :class="`flex justify-center items-center bg-[#a38967] ${screenHeight >= 840 ? 'h-screen' : ''}`" style="background-image: url('/juntas.png')">
     <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] xl:w-[50%]">
       <CardHeader>
         <div class="grid grid-cols-12">
@@ -89,9 +89,7 @@
         </div>
       </ScrollArea>
       <DialogFooter>
-        <div class="flex justify-center">
-          <Button @click="dialogListaPresente = false">Ok</Button>
-        </div>
+        <Button @click="dialogListaPresente = false">Ok</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -109,15 +107,23 @@ import Caderno from '@/components/Caderno.vue'
 import Foto from '@/components/Foto.vue'
 import { createClient } from '@supabase/supabase-js'
 
+
 const lista = ref([])
 const nomePessoa = ref('')
 const dialogListaPresente = ref(false)
 const screenWidth = ref(window.innerWidth)
+const screenHeight = ref(window.innerHeight)
+const cardPrincipal = ref(null)
+const isMobile = ref(false)
 
 const mensagemCasal = ref('')
 
 const abrirListaPresente = () => {
   dialogListaPresente.value = true
+}
+const checkDevice = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera
+  isMobile.value = /android|iphone|ipad|ipod|opera mini|iemobile|wpdesktop/i.test(userAgent.toLowerCase())
 }
 const supabase = createClient('https://acfrcmkzzabbqtwchiow.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZnJjbWt6emFiYnF0d2NoaW93Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMDQ3NzE3OCwiZXhwIjoyMDQ2MDUzMTc4fQ.ZoWVFkjTxFJL5ox3Zb-R4hgk7t6ia9T639aJEFZF4js')
 
@@ -140,7 +146,9 @@ const agruparPorGrupo = (presentes) => {
 onMounted(async () => {
   window.addEventListener('resize', () => {
     screenWidth.value = window.innerWidth
+    screenHeight.value = window.innerHeight
   })
+  checkDevice()
   const { data, error } = await supabase.from('presente').select('*')
   lista.value = agruparPorGrupo(data)
 })
