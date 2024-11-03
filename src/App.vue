@@ -58,17 +58,30 @@
     </Card>
   </div>
   <Dialog v-model:open="dialogListaPresente">
-    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay h-screen max-w-4xl">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay h-[90%] max-w-5xl">
       <DialogHeader>
         <DialogTitle class="text-6xl text-center">Lista de Presente</DialogTitle>
-        <DialogDescription/>
-        <div class="flex justify-center">
-          <Separator class="my-4 bg-[#856741] w-6/12"/>
-          🥄
-          <Separator class="my-4 bg-[#856741] w-6/12"/>
-        </div>
+        <DialogDescription>
+          <div class="flex justify-center">
+            <Separator class="my-4 bg-[#856741] w-6/12"/>
+            🥄
+            <Separator class="my-4 bg-[#856741] w-6/12"/>
+          </div>
+        </DialogDescription>
       </DialogHeader>
-      <PresentList :grupos="lista"/>
+      <ScrollArea>
+        <div class="grid grid-cols-12 gap-4">
+          <Card v-for="(grupo, index) in lista" :key="index" class="col-span-12 md:col-span-4">
+            <CardContent>
+              <h2 class="text-lg font-semibold text-center border-b border-gray-300 pb-2">{{ grupo.nome }}</h2> 
+              <div v-for="(presente, indexPresente) in grupo.presentes" :key="indexPresente">
+                <span class="mr-2">•</span>
+                <span>{{ presente.nome }}</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </ScrollArea>
     </DialogContent>
   </Dialog>
 </template>
@@ -80,10 +93,10 @@ import { Separator } from '@/components/ui/separator'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import Caderno from '@/components/Caderno.vue'
 import Foto from '@/components/Foto.vue'
 import { createClient } from '@supabase/supabase-js'
-import PresentList from '@/components/PresentList.vue'
 
 const lista = ref([])
 const nomePessoa = ref('')
