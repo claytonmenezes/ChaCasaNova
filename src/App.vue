@@ -118,6 +118,16 @@
       </div>
     </DialogContent>
   </Dialog>
+  <Dialog v-model:open="alertaOk">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Cadastrado com sucesso!</DialogTitle>
+      </DialogHeader>
+      <div class="flex justify-center gap-4">
+        <Button @click="alertaOk = false" class="w-2/6">Ok</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup>
@@ -140,6 +150,7 @@ const dialogListaPresente = ref(false)
 const screenWidth = ref(window.innerWidth)
 const screenHeight = ref(window.innerHeight)
 const alerta = ref(false)
+const alertaOk = ref(false)
 const ehEditar = ref(false)
 const convidado = ref({
   nome: '',
@@ -171,7 +182,7 @@ const agruparPorGrupo = (presentes) => {
     return acc
   }, {})
 }
-const enviar = async () => {
+const enviar = async () => {  
   let convidadoInterno
   if (ehEditar.value) {
     const { data, error } = await supabase.from('convidado').update({ mensagem: convidado.value.mensagem, presente: convidado.value.presente }).eq('nome', convidado.value.nome).select()
@@ -186,7 +197,15 @@ const enviar = async () => {
     convidadoInterno = data[0]
   }
   await supabase.from('convidadoPresente').insert(convidado.value.presentes.map(p => ({convidadoId: convidadoInterno.id, presenteId: p})))
+  convidado.value = {
+    nome: '',
+    mensagem: '',
+    presente: true,
+    presentes: []
+  }
+  ehEditar.value = false
   await desabilitaPresente()
+  alertaOk.value = true
 }
 const desabilitaPresente = async () => {
   const { data: convidadosPresentes } = await supabase.from('convidadoPresente').select("*")
