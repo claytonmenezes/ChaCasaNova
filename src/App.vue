@@ -46,7 +46,7 @@
               </RadioGroup>
               <div class="flex justify-center gap-4 mb-6">
                 <Button @click="abrirListaPresente">Lista de Presente</Button>
-                <Button @click="enviar">Enviar</Button>
+                <Button @click="validador">Enviar</Button>
               </div>
             </Card>
           </div>
@@ -128,6 +128,17 @@
       </div>
     </DialogContent>
   </Dialog>
+  <Dialog v-model:open="alertaSemMensagem">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Não vai deixar nenhuma mensagem pro casal?</DialogTitle>
+      </DialogHeader>
+      <div class="flex justify-center gap-4">
+        <Button @click="alertaSemMensagem = false" class="w-2/6">Eita, esqueci</Button>
+        <Button @click="enviar" class="w-2/6 ">Não!</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup>
@@ -151,6 +162,7 @@ const screenWidth = ref(window.innerWidth)
 const screenHeight = ref(window.innerHeight)
 const alerta = ref(false)
 const alertaOk = ref(false)
+const alertaSemMensagem = ref(false)
 const ehEditar = ref(false)
 const convidado = ref({
   nome: '',
@@ -182,7 +194,15 @@ const agruparPorGrupo = (presentes) => {
     return acc
   }, {})
 }
-const enviar = async () => {  
+const validador = () => {
+  if (!convidado.value.mensagem) {
+    alertaSemMensagem.value = true
+  } else {
+    enviar()
+  }
+}
+const enviar = async () => {
+  alertaSemMensagem.value = false
   let convidadoInterno
   if (ehEditar.value) {
     const { data, error } = await supabase.from('convidado').update({ mensagem: convidado.value.mensagem, presente: convidado.value.presente }).eq('nome', convidado.value.nome).select()
