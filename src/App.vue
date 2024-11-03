@@ -1,5 +1,5 @@
 <template>
-  <div class="lg:flex lg:justify-center lg:items-center bg-[#a38967] h-screen" style="background-image: url('/juntas.png')">
+  <div :class="screenWidth >= 400 ? 'flex justify-center items-center bg-[#a38967] h-screen' : 'bg-[#a38967] h-screen'" style="background-image: url('/juntas.png')">
     <Card class="bg-[#cdc4b3] shadow-[10px_10px_20px_rgba(0,0,0,0.8)] xl:w-[50%]">
       <CardHeader>
         <div class="grid grid-cols-12">
@@ -88,6 +88,7 @@ import PresentList from '@/components/PresentList.vue'
 const lista = ref([])
 const nomePessoa = ref('')
 const dialogListaPresente = ref(false)
+const screenWidth = ref(window.innerWidth)
 
 const mensagemCasal = ref('')
 
@@ -113,6 +114,9 @@ const agruparPorGrupo = (presentes) => {
 }
 
 onMounted(async () => {
+  window.addEventListener('resize', () => {
+    screenWidth.value = window.innerWidth
+  })
   const { data, error } = await supabase.from('presente').select('*')
   lista.value = agruparPorGrupo(data)
 })
