@@ -32,7 +32,10 @@
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Input placeholder="Seu nome" v-model="convidado.nome" class="bg-white"/>
+                <div class="flex justify-between gap-4">
+                  <Input placeholder="Seu nome" v-model="convidado.nome" class="bg-white"/>
+                  <Input v-if="convidado.presente" placeholder="Cpf" v-model="convidado.cpf" class="bg-white"/>
+                </div>
                 <Caderno class="h-64" v-model="convidado.mensagem"/>
               </CardContent>
               <Label>Estará presente no dia?</Label>
@@ -134,8 +137,8 @@
         <DialogTitle class="text-center">Não vai deixar nenhuma mensagem pro casal?</DialogTitle>
       </DialogHeader>
       <div class="flex justify-center gap-4">
-        <Button @click="alertaSemMensagem = false" class="w-2/6">Eita, esqueci</Button>
-        <Button @click="enviar" class="w-2/6 ">Não!</Button>
+        <Button @click="alertaSemMensagem = false" class="w-2/6">voltar</Button>
+        <Button @click="validadorSemMensagem" class="w-2/6 ">Não!</Button>
       </div>
     </DialogContent>
   </Dialog>
@@ -145,8 +148,28 @@
         <DialogTitle class="text-center">Não vai deixar nenhuma presente pro casal?</DialogTitle>
       </DialogHeader>
       <div class="flex justify-center gap-4">
-        <Button @click="alertaSemPresente = false" class="w-2/6">Eita, esqueci</Button>
+        <Button @click="alertaSemPresente = false" class="w-2/6">voltar</Button>
         <Button @click="enviar" class="w-2/6 ">Não!</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+  <Dialog v-model:open="alertaSemNome">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Digite seu Nome</DialogTitle>
+      </DialogHeader>
+      <div class="flex justify-center gap-4">
+        <Button @click="alertaSemNome = false" class="w-2/6">voltar</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+  <Dialog v-model:open="alertaSemCpf">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Digite o CPF para colocarmos na portaria do condomínio.</DialogTitle>
+      </DialogHeader>
+      <div class="flex justify-center gap-4">
+        <Button @click="alertaSemCpf = false" class="w-2/6">voltar</Button>
       </div>
     </DialogContent>
   </Dialog>
@@ -176,10 +199,12 @@ const alertaOk = ref(false)
 const alertaSemMensagem = ref(false)
 const alertaSemPresente = ref(false)
 const semMensagem = ref(false)
-const semPresente = ref(false)
+const alertaSemNome = ref(false)
+const alertaSemCpf = ref(false)
 const ehEditar = ref(false)
 const convidado = ref({
   nome: '',
+  cpf: '',
   mensagem: '',
   presente: true,
   presentes: []
@@ -208,15 +233,17 @@ const agruparPorGrupo = (presentes) => {
     return acc
   }, {})
 }
-const validaMensagem = () => {
-  if (!convidado.value.mensagem && !semMensagem) {
-    alertaSemMensagem.value = true
-    return true
-  }
-  return false
+const validadorSemMensagem = () => {
+  semMensagem.value = true
+  validador()
 }
 const validador = () => {
-  if (!convidado.value.mensagem && !semMensagem) {
+  console.log(convidado.value.mensagem, semMensagem, !convidado.value.mensagem && !semMensagem)
+  if (!convidado.value.nome) {
+    alertaSemNome.value = true
+  } else if (convidado.value.presente && ! convidado.value.cpf) {
+    alertaSemCpf.value = true
+  } else if (!convidado.value.mensagem && !semMensagem.value) {
     alertaSemMensagem.value = true
   } else {
     enviar()
@@ -226,11 +253,11 @@ const enviar = async () => {
   alertaSemMensagem.value = false
   let convidadoInterno
   if (ehEditar.value) {
-    const { data, error } = await supabase.from('convidado').update({ mensagem: convidado.value.mensagem, presente: convidado.value.presente }).eq('nome', convidado.value.nome).select()
+    const { data, error } = await supabase.from('convidado').update({ mensagem: convidado.value.mensagem, presente: convidado.value.presente, cpf: convidado.value.cpf }).eq('nome', convidado.value.nome).select()
     await supabase.from('convidadoPresente').delete().eq('convidadoId', data[0].id)
     convidadoInterno = data[0]
   } else {
-    const { data, error } = await supabase.from('convidado').insert([{ nome: convidado.value.nome, mensagem: convidado.value.mensagem, presente: convidado.value.presente }]).select()
+    const { data, error } = await supabase.from('convidado').insert([{ nome: convidado.value.nome, mensagem: convidado.value.mensagem, presente: convidado.value.presente, cpf: convidado.value.cpf }]).select()
     if (error && error.code === '23505' ) {
       alerta.value = true
       return
@@ -240,6 +267,7 @@ const enviar = async () => {
   await supabase.from('convidadoPresente').insert(convidado.value.presentes.map(p => ({convidadoId: convidadoInterno.id, presenteId: p})))
   convidado.value = {
     nome: '',
+    cpf: '',
     mensagem: '',
     presente: true,
     presentes: []
@@ -275,6 +303,7 @@ const editarConvidado = async () => {
   const presentes = convidadoPresenteData.map(cp => (cp.presenteId))
   convidado.value = {
     nome: convidadoInterno.nome,
+    cpf: convidadoInterno.cpf,
     mensagem: convidadoInterno.mensagem,
     presente: convidadoInterno.presente,
     presentes
