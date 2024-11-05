@@ -67,7 +67,7 @@
       <CardContent class="text-center font-PlayfairDisplay text-3xl">
         Rua Elias Antonio Zogbi, 150 - Santo Amaro - São Paulo - SP
         <br>
-        Salão de Festa - a partir das 14h
+        Salão de Festa - dia 16/11 as 14h
       </CardContent>
     </Card>
   </div>
@@ -139,6 +139,17 @@
       </div>
     </DialogContent>
   </Dialog>
+  <Dialog v-model:open="alertaSemPresente">
+    <DialogContent class="bg-[#cdc4b3] font-PlayfairDisplay">
+      <DialogHeader>
+        <DialogTitle class="text-center">Não vai deixar nenhuma presente pro casal?</DialogTitle>
+      </DialogHeader>
+      <div class="flex justify-center gap-4">
+        <Button @click="alertaSemPresente = false" class="w-2/6">Eita, esqueci</Button>
+        <Button @click="enviar" class="w-2/6 ">Não!</Button>
+      </div>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup>
@@ -163,6 +174,9 @@ const screenHeight = ref(window.innerHeight)
 const alerta = ref(false)
 const alertaOk = ref(false)
 const alertaSemMensagem = ref(false)
+const alertaSemPresente = ref(false)
+const semMensagem = ref(false)
+const semPresente = ref(false)
 const ehEditar = ref(false)
 const convidado = ref({
   nome: '',
@@ -194,8 +208,15 @@ const agruparPorGrupo = (presentes) => {
     return acc
   }, {})
 }
+const validaMensagem = () => {
+  if (!convidado.value.mensagem && !semMensagem) {
+    alertaSemMensagem.value = true
+    return true
+  }
+  return false
+}
 const validador = () => {
-  if (!convidado.value.mensagem) {
+  if (!convidado.value.mensagem && !semMensagem) {
     alertaSemMensagem.value = true
   } else {
     enviar()
